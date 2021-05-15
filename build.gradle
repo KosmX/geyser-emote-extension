@@ -7,13 +7,13 @@ version '0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven{
+        name = "bundabrg-repo"
+        url = "https://repo.worldguard.com.au/repository/maven-public"
+    }
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-}
+    implementation "org.geysermc:connector:${project.geyser_plugin}"
 
-test {
-    useJUnitPlatform()
 }
