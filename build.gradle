@@ -7,9 +7,25 @@ version '0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    /*
     maven{
         name = "bundabrg-repo"
         url = "https://repo.worldguard.com.au/repository/maven-public"
+    }*/
+    maven{
+        url = 'https://jitpack.io'
+    }
+    maven{
+        url = 'https://repo.viaversion.com'
+    }
+
+    maven{
+        name = 'geyser'
+        url = 'https://repo.opencollab.dev/maven-releases/'
+    }
+    maven{
+        name = 'geyser-snapshots'
+        url = "https://repo.opencollab.dev/maven-snapshots/"
     }
 }
 
