@@ -1,0 +1,6 @@
+id: javaemotes
+name: emotecraft_bridge
+main: dev.kosmx.geyserEmotes.GeyserExtension
+api: 1.0.0
+version: 1.0.0
+authors: [KosmX]
