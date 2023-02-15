@@ -5,7 +5,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundCu
 import com.nukkitx.protocol.bedrock.packet.EmotePacket
 import org.geysermc.event.subscribe.Subscribe
 import org.geysermc.geyser.api.event.ExtensionEventBus
-import org.geysermc.geyser.api.event.bedrock.BedrockEmoteEvent
+import org.geysermc.geyser.api.event.bedrock.ClientEmoteEvent
 import org.geysermc.geyser.api.event.java.ServerDefineCommandsEvent
 import org.geysermc.geyser.api.event.lifecycle.GeyserPostInitializeEvent
 import org.geysermc.geyser.api.extension.Extension
@@ -31,7 +31,7 @@ open class GeyserExtension : Extension {
     fun onPostInitialize(event: GeyserPostInitializeEvent) {
         logger.info("Loading emotes extension")
 
-        eventBus.subscribe(BedrockEmoteEvent::class.java, this::onEmoteEvent)
+        eventBus.subscribe(ClientEmoteEvent::class.java, this::onEmoteEvent)
 
         // hijack custom payload listener to add custom listener in a cascade way
         val originCustomPayloadTranslator =
@@ -59,8 +59,8 @@ open class GeyserExtension : Extension {
 
 
         // misuse of events (again)
-        eventBus.subscribe(ServerDefineCommandsEvent::class.java) { event ->
-            val session = event.connection() as GeyserSession
+        eventBus.subscribe(ServerDefineCommandsEvent::class.java) { commandEvent ->
+            val session = commandEvent.connection() as GeyserSession
             session.sendDownstreamPacket(ServerboundCustomPayloadPacket("minecraft:register", javaEmotePacketID.toByteArray(StandardCharsets.UTF_8))) // null separated a.k.a. no tailing null
         }
 
@@ -82,7 +82,7 @@ open class GeyserExtension : Extension {
 
     //@Subscribe
     @Suppress("UNUSED")
-    private fun onEmoteEvent(event: BedrockEmoteEvent) {
+    private fun onEmoteEvent(event: ClientEmoteEvent) {
         val session = event.connection() as GeyserSession // i'll have to send packets, hacking
         logger.info("Bedrock emote event, emotes compatible server: ${javaEmoteChannelPresence[session.remoteServer().address()]}")
         if (javaEmoteChannelPresence[session.remoteServer().address()]) {
