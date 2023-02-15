@@ -3,6 +3,11 @@ package dev.kosmx.geyserEmotes
 import java.nio.charset.StandardCharsets
 
 object DataUtil {
+
+    /**
+     * Reads a null separated array of strings, used in minecraft:register plugin channel registration
+     * Properly handles tailing null
+     */
     tailrec fun readCStrings(data: ByteArray, offset: Int = 0, list: List<String> = listOf()): List<String> {
         var end = offset + 1
         while (end < data.size && data[end] != 0.toByte()) {

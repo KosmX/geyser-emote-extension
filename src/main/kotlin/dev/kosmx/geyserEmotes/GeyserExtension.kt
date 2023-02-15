@@ -22,14 +22,16 @@ open class GeyserExtension : Extension {
     private val eventBus: ExtensionEventBus
         get() = eventBus()
 
+    // Tiny memory leak when using with Geyser Connect, can't be avoided without proper lifecycle events.
     private val javaEmoteChannelPresence = DefaultMap<String, Boolean>(false)
-    // packet contains a byte prefixed string (max 127 long), actually a UUID
     private val javaEmotePacketID = "geyser:emote"
 
     @Subscribe
     @Suppress("UNCHECKED_CAST", "UNUSED")
     fun onPostInitialize(event: GeyserPostInitializeEvent) {
         logger.info("Loading emotes extension")
+        logger.warning("Note that this extension does some horrible hacks on geyser.")
+        logger.warning("Until custom packet event is added, workarounds cannot be avoided.")
 
         eventBus.subscribe(ClientEmoteEvent::class.java, this::onEmoteEvent)
 
@@ -44,6 +46,7 @@ open class GeyserExtension : Extension {
                     if (packet.channel == "minecraft:register") {
                         val channels = DataUtil.readCStrings(data = packet.data)
                         if (javaEmotePacketID in channels) {
+                            logger.info("Server ${session.remoteServer().address()} is listening on geyser:emotes, delegating emote logic to server.")
                             javaEmoteChannelPresence[session.remoteServer().address()] = true // look for other side opening geyser channel
                         }
                     }
@@ -84,7 +87,7 @@ open class GeyserExtension : Extension {
     @Suppress("UNUSED")
     private fun onEmoteEvent(event: ClientEmoteEvent) {
         val session = event.connection() as GeyserSession // i'll have to send packets, hacking
-        logger.info("Bedrock emote event, emotes compatible server: ${javaEmoteChannelPresence[session.remoteServer().address()]}")
+        //logger.info("Bedrock emote event, emotes compatible server: ${javaEmoteChannelPresence[session.remoteServer().address()]}")
         if (javaEmoteChannelPresence[session.remoteServer().address()]) {
             event.isCancelled = true
 

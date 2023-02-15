@@ -8,8 +8,8 @@ plugins {
     // lombok is not needed from kotlin, we have even more features this way
 }
 
-group "dev.kosmx.geyserEmotes"
-version "0.1-SNAPSHOT"
+group = "dev.kosmx.geyserEmotes"
+version = project.property("version") as String
 
 java.sourceCompatibility = JavaVersion.VERSION_17
 java.targetCompatibility = JavaVersion.VERSION_17
@@ -53,6 +53,14 @@ dependencies {
 }
 
 tasks {
+    processResources {
+        inputs.property("version", project.version)
+
+        filesMatching("extension.yml") {
+            expand("version" to project.version)
+        }
+    }
+
     withType<JavaCompile>().configureEach {
         options.release.set(java.targetCompatibility.majorVersion.toInt())
     }
@@ -70,8 +78,9 @@ tasks {
 
     shadowJar {
         configurations = listOf(project.configurations["shadowImplementation"])
-        relocate("kotlin", "dev.kosmx.geyserEmotes.kotlin")
 
+        minimize()
+        relocate("kotlin", "dev.kosmx.geyserEmotes.kotlin")
         archiveClassifier.set("")
     }
     build {

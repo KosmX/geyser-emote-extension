@@ -9,6 +9,8 @@ import java.util.*
 /**
  * @param runtimeEntityID it's actually an int, but to preserve legacy compatibility, long will be used
  * @param emoteID the bedrock emote UUID
+ *
+ * Emotecraft geyser emote packet, both directions
  */
 data class JavaEmotePacket(val runtimeEntityID: Long, val emoteID: UUID) {
     companion object {
@@ -27,7 +29,7 @@ data class JavaEmotePacket(val runtimeEntityID: Long, val emoteID: UUID) {
         val byteBuffer = ByteBuffer.allocate(bytes.size + 1 + 8)
         byteBuffer.put(bytes.size.toByte())
         byteBuffer.put(bytes)
-        byteBuffer.putLong(runtimeEntityID)
+        byteBuffer.putLong(runtimeEntityID) // this is actually ignored on the other end, but that is not a problem
         return byteBuffer.array()
     }
 }
